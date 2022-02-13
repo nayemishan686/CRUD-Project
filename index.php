@@ -46,13 +46,20 @@
     
     <!-- Start Main-Content Section -->
     <section id="main-content" class="container">
-        <?php include_once ('inc/templates/nav.php') ?>
-        <hr>
-        <?php 
-            if($info != ''){
-                echo "<p><?php echo $info; ?></p>";
-            }
-        ?>
+        <section id="nav">
+            <?php include_once ('inc/templates/nav.php') ?>
+            <hr>
+            <?php 
+                if($info != ''){
+                    echo "<p><?php echo $info; ?></p>";
+                }
+            ?>
+        </section>
+        <?php if('report' == $task):?>
+        <section id="report">
+            <?php generateReport(); ?>
+        </section>
+        <?php endif; ?>
     </section>
 
     

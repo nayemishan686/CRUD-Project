@@ -37,4 +37,30 @@
         file_put_contents(DB_NAME, $serializedData);
     }
 
+    function generateReport(){
+        $serializedData = file_get_contents(DB_NAME);
+        $students = unserialize($serializedData);
+    ?>
+        <table class="table table-striped ">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Roll</th>
+                <th>Action</th>
+            </tr>
+            <?php 
+                foreach($students as $student){
+                    ?>
+                        <tr>
+                            <td><?php printf("%s", $student['id']); ?></td>
+                            <td><?php printf("%s %s", $student['fname'], $student['$lname']); ?></td>
+                            <td><?php printf("%s", $student['roll']) ?></td>
+                            <td width="25%"><a href="#" class="btn btn-success">Edit</a>  <a href="#" class="btn btn-danger">Delete</a></td>
+                        </tr>
+                    <?php
+                }
+            ?>
+        </table>
+    <?php
+    }
 ?>
