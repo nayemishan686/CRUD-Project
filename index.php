@@ -1,13 +1,33 @@
 <?php 
     require_once 'inc/functions.php';
     $info = '';
+    $error = $_GET['error'] ?? 0;
     $task = $_GET['task'] ?? 'report';
     if('seed' == $_GET['task']){
         seed();
         $info = "Seeding is done";
     }
 
+    //code for student data
+    $fname = '';
+    $lname = '';
+    $roll = '';
+    if(isset($_POST['submit'])){
+    $fname = sanitizing($_POST['fname']);
+    $lname = sanitizing($_POST['lname']);
+    $roll = sanitizing($_POST['roll']);
+    //code for add new student information
+    if($fname != '' && $lname != '' && $roll != ''){
+        $result = addStudent($fname, $lname, $roll);
+        if($result){
+            header( 'location: /crud/index.php?task=report' );
+        }else{
+            $error = 1;
+        }
+        
+    }
 
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -23,6 +43,7 @@
             margin: 0;
             padding: 0;
             font-family: Arial, Helvetica, sans-serif;
+            overflow-y: scroll;
         }
         #main-content {
             min-height: 80vh;
@@ -49,17 +70,44 @@
         <section id="nav">
             <?php include_once ('inc/templates/nav.php') ?>
             <hr>
+
+            <!-- Code for seeding report -->
             <?php 
                 if($info != ''){
-                    echo "<p><?php echo $info; ?></p>";
+                    echo "<p>$info</p>";
                 }
             ?>
         </section>
-        <?php if('report' == $task):?>
-        <section id="report">
-            <?php generateReport(); ?>
-        </section>
+        <!-- Code for duplicated roll -->
+        <?php if(1 == $error):?>
+            <section id="duplicate">
+                <blockquote>
+                    Duplicate Roll Number
+                </blockquote>
+            </section>
         <?php endif; ?>
+        <!-- Code for Generating Reports -->
+        <?php if('report' == $task):?>
+            <section id="report">
+                <?php generateReport(); ?>
+            </section>
+        <?php endif; ?>
+
+        <?php if('add' == $task):?>
+            <section id="add-student">
+                <form action="/crud/index.php?task=add" method="POST">
+                    <label for="fname">First Name :</label>
+                    <input type="text" name="fname" id="fname" placeholder="Enter your first name" class="form-control mt-2 mb-2" value="<?php echo $fname; ?>">
+                    <label for="lname">Last Name :</label>
+                    <input type="text" name="lname" id="lname" placeholder="Enter your last name" class="form-control mt-2 mb-2" value="<?php echo $lname; ?>">
+                    <label for="roll">Roll :</label>
+                    <input type="number" name="roll" id="roll" placeholder="Enter your roll number" class="form-control mt-2 mb-2" value="<?php echo $roll; ?>" >
+                    <input type="submit" value="Save" name="submit" id="save" class="btn btn-success">
+                </form>
+            </section>
+        <?php endif; ?>
+
+        
     </section>
 
     

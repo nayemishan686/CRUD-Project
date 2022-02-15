@@ -1,5 +1,6 @@
 <?php 
     define('DB_NAME','/opt/lampp/htdocs/crud/data/db.txt');
+    //functin for seeding data
     function seed(){
         $data           = array(
             array(
@@ -36,7 +37,7 @@
         $serializedData = serialize($data);
         file_put_contents(DB_NAME, $serializedData);
     }
-
+    //Functiion for generating report
     function generateReport(){
         $serializedData = file_get_contents(DB_NAME);
         $students = unserialize($serializedData);
@@ -53,7 +54,7 @@
                     ?>
                         <tr>
                             <td><?php printf("%s", $student['id']); ?></td>
-                            <td><?php printf("%s %s", $student['fname'], $student['$lname']); ?></td>
+                            <td><?php printf("%s %s", $student['fname'], $student['lname']); ?></td>
                             <td><?php printf("%s", $student['roll']) ?></td>
                             <td width="25%"><a href="#" class="btn btn-success">Edit</a>  <a href="#" class="btn btn-danger">Delete</a></td>
                         </tr>
@@ -62,5 +63,40 @@
             ?>
         </table>
     <?php
+    }
+    //function for sanitize data
+    function sanitizing($input){
+        $input = trim($input);
+        $input = htmlspecialchars($input);
+        $input = stripslashes($input);
+        return $input;
+    }
+
+    //function for add new student
+    function addStudent($fname, $lname, $roll){
+        $found = false;
+        $serializedData = file_get_contents(DB_NAME);
+        $students = unserialize($serializedData);
+        foreach($students as $_student){
+            if($_student['roll'] == $roll){
+                $found = true;
+                break;
+            }
+        }
+        if(!$found){
+        $newId = count($students)+1;
+        $student = array(
+            'id' => $newId,
+            'fname' => $fname,
+            'lname' => $lname,
+            'roll' => $roll
+        );
+        array_push($students,$student);
+        $serializedData = serialize($students);
+        file_put_contents(DB_NAME, $serializedData,LOCK_EX);
+
+        return true;
+        }
+        return false;
     }
 ?>
