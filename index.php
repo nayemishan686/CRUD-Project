@@ -3,10 +3,21 @@
     $info = '';
     $error = $_GET['error'] ?? 0;
     $task = $_GET['task'] ?? 'report';
+
     if('seed' == $_GET['task']){
         seed();
         $info = "Seeding is done";
     }
+
+    //code for delete student
+    if('delete' == $_GET['task']){
+        $id = sanitizing($_GET['id']);
+        if($id>0){
+            deleteStudent($id);
+            header( 'location: /crud/index.php?task=report' );
+        }
+    }
+
 
     //code for student data
     $fname = '';
@@ -26,8 +37,7 @@
             }else{
                 $error = 1;
             }
-            
-            
+
         }
     }else{
         if($fname != '' && $lname != '' && $roll != ''){
@@ -166,5 +176,6 @@
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/script.js"></script>
 </body>
 </html>

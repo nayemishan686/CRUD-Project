@@ -56,7 +56,7 @@
                             <td><?php printf("%s", $student['id']); ?></td>
                             <td><?php printf("%s %s", $student['fname'], $student['lname']); ?></td>
                             <td><?php printf("%s", $student['roll']) ?></td>
-                            <td width="25%"><?php printf( '<a href="/crud/index.php?task=edit&id=%s" class="btn btn-success">Edit</a> | <a href="/crud/index.php?task=delete&id=%s" class="btn btn-danger">Delete</a>', $student['id'], $student['id'] ); ?></td>
+                            <td width="25%"><?php printf( '<a href="/crud/index.php?task=edit&id=%s" class="btn btn-success">Edit</a> | <a href="/crud/index.php?task=delete&id=%s" class="btn btn-danger permission">Delete</a>', $student['id'], $student['id'] ); ?></td>
                         </tr>
                     <?php
                 }
@@ -84,7 +84,7 @@
             }
         }
         if(!$found){
-        $newId = count($students)+1;
+        $newId = getNewId($students);
         $student = array(
             'id' => $newId,
             'fname' => $fname,
@@ -98,6 +98,12 @@
         return true;
         }
         return false;
+    }
+
+    //function for new id generating
+    function getNewId($students) {
+        $maxId = max(array_column($students, 'id'));
+        return $maxId+1;
     }
     
     //function for taking exiting student for editing
@@ -132,6 +138,19 @@
         return true;
         }
         return false;
+    }
+
+    //function for delete a student
+    function deleteStudent($id){
+        $serializedData = file_get_contents(DB_NAME);
+        $students = unserialize($serializedData);
+        foreach($students as $offset => $student){
+            if($student['id'] == $id){
+                unset($students[$offset]);
+            }
+        }
+        $serializedData = serialize($students);
+        file_put_contents(DB_NAME, $serializedData, LOCK_EX);
     }
 
 
