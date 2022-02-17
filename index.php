@@ -16,15 +16,29 @@
     $fname = sanitizing($_POST['fname']);
     $lname = sanitizing($_POST['lname']);
     $roll = sanitizing($_POST['roll']);
+    $id = sanitizing($_POST['id']);
     //code for add new student information
-    if($fname != '' && $lname != '' && $roll != ''){
-        $result = addStudent($fname, $lname, $roll);
-        if($result){
-            header( 'location: /crud/index.php?task=report' );
-        }else{
-            $error = 1;
+    if($id){
+        if($fname != '' && $lname != '' && $roll != ''){
+            $result = upadateStudent($id, $fname, $lname, $roll);
+            if($result){
+                header( 'location: ' );
+            }else{
+                $error = 1;
+            }
+            
+            
         }
-        
+    }else{
+        if($fname != '' && $lname != '' && $roll != ''){
+            $result = addStudent($fname, $lname, $roll);
+            if($result){
+                header( 'location: /crud/index.php?task=report' );
+            }else{
+                $error = 1;
+            }
+            
+        }
     }
 
     }
@@ -92,7 +106,8 @@
                 <?php generateReport(); ?>
             </section>
         <?php endif; ?>
-
+        
+        <!-- Code for add new student -->
         <?php if('add' == $task):?>
             <section id="add-student">
                 <form action="/crud/index.php?task=add" method="POST">
@@ -106,6 +121,30 @@
                 </form>
             </section>
         <?php endif; ?>
+
+        <!-- Code for editing created student -->
+        <?php if('edit' == $task):
+            $id = sanitizing($_GET['id']);
+            $student = getStudent($id);
+            if($student):   
+            
+        ?>
+            <section id="edit-student">
+                <form  method="POST">
+                    <input type="hidden" name="id" value="<?php echo $id?>">
+                    <label for="fname">First Name :</label>
+                    <input type="text" name="fname" id="fname" placeholder="Enter your first name" class="form-control mt-2 mb-2" value="<?php echo $student['fname']; ?>">
+                    <label for="lname">Last Name :</label>
+                    <input type="text" name="lname" id="lname" placeholder="Enter your last name" class="form-control mt-2 mb-2" value="<?php echo $student['lname']; ?>">
+                    <label for="roll">Roll :</label>
+                    <input type="number" name="roll" id="roll" placeholder="Enter your roll number" class="form-control mt-2 mb-2" value="<?php echo $student['roll']; ?>" >
+                    <input type="submit" value="Update" name="submit" id="save" class="btn btn-success">
+                </form>
+            </section>
+        <?php
+        endif; 
+        endif; 
+     ?>
 
         
     </section>
